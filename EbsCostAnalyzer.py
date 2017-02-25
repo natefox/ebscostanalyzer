@@ -27,6 +27,7 @@ import datetime
 import arrow
 import argparse
 import json
+import math
 from dateutil.tz import *
 from collections import namedtuple
 
@@ -163,12 +164,6 @@ ebs_monthly_rates={
         "eu-west-2": 0.116
     }
 }
-
-#
-# Simple roundup function
-#
-def roundup(a):
-    return a if (int(a) == a) else a + 1
 
 #
 # Find maximum value in a list of datapoints returned
@@ -629,7 +624,7 @@ def analyze_ebs_motion(access, secret, rList, useAvg, useJson):
                         # Might need to increase size of gp2 to get same
                         # IOPS as io1's provisioned IOPS
                         if (vol.Size * GP2_IOPS_PER_GB < totalIops):
-                            advInfo['RecommendedSize'] = roundup(totalIops / GP2_IOPS_PER_GB)
+                            advInfo['RecommendedSize'] = math.ceil(totalIops / GP2_IOPS_PER_GB)
                             advInfo['RecommendedIops'] = advInfo['RecommendedSize'] * GP2_IOPS_PER_GB
                     else:
                         advInfo['RecommendedIops'] = max(totalIops, get_minimum_iops('io1'))
